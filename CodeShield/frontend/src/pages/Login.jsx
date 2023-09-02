@@ -37,7 +37,6 @@ export default function Login() {
                 updatedColor = 'green';
                 setTimeout(() => {
                     <NavLink to={'/'}/>
-                    console.log(1)
                 }, 1000)
             } catch (err) {
                 console.log(err);
