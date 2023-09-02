@@ -1,0 +1,198 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: local('Material Icons'),
+    local('MaterialIcons-Regular'),
+    url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
+    url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
+    url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
+}
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+*{
+  margin: 0;
+  padding: 0;
+}
+body{
+    background: black url('/blurry-gradient-haikei.png') center center ;
+    background-size: cover;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    font-family: 'Nunito Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
+    font-family: 'Rubik', sans-serif;
+    font-family: 'Ubuntu Mono', monospace;
+    overflow-x: hidden;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #0e112e;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  button {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    border: 0;
+    vertical-align: middle;
+    text-decoration: none;
+    background: transparent;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+   }
+   
+   button.learn-more {
+    width: 12rem;
+    height: auto;
+   }
+   
+   button.learn-more .circle {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: relative;
+    display: block;
+    margin: 0;
+    width: 3rem;
+    height: 3rem;
+    background: #282936;
+    border-radius: 1.625rem;
+   }
+   
+   button.learn-more .circle .icon {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    background: #fff;
+   }
+   
+   button.learn-more .circle .icon.arrow {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    left: 0.625rem;
+    width: 1.125rem;
+    height: 0.125rem;
+    background: none;
+   }
+   
+   button.learn-more .circle .icon.arrow::before {
+    position: absolute;
+    content: "";
+    top: -0.29rem;
+    right: 0.0625rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-top: 0.125rem solid #fff;
+    border-right: 0.125rem solid #fff;
+    transform: rotate(45deg);
+   }
+   
+   button.learn-more .button-text {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.75rem 0;
+    margin: 0 0 0 1.85rem;
+    color: white;
+    font-weight: 700;
+    line-height: 1.6;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+   }
+   
+   button:hover .circle {
+    width: 100%;
+   }
+   
+   button:hover .circle .icon.arrow {
+    background: #fff;
+    transform: translate(1rem, 0);
+   }
+   
+   button:hover .button-text {
+    color: #fff;
+   }
+
+   .spinner {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    border: 4.5px solid #0000;
+    border-radius: 50%;
+    border-color: #dbdcef #0000;
+    animation: spinner-e04l1k 1s infinite linear;
+  }
+  
+  .spinner::before,
+  .spinner::after {
+    content: "";
+    grid-area: 1/1;
+    margin: 2.2px;
+    border: inherit;
+    border-radius: 50%;
+  }
+  
+  .spinner::before {
+    border-color: #474bff #0000;
+    animation: inherit;
+    animation-duration: 0.5s;
+    animation-direction: reverse;
+  }
+  
+  .spinner::after {
+    margin: 8.9px;
+  }
+  
+  @keyframes spinner-e04l1k {
+    100% {
+      transform: rotate(1turn);
+    }
+  }
