@@ -36,11 +36,7 @@ export default function Login() {
                 updatedAlertMessage = response.data.message;
                 updatedColor = 'green';
                 setTimeout(() => {
-<<<<<<< HEAD
-                    <NavLink to={'/'}/>
-=======
                     location.pathname = '/'
->>>>>>> 7e88622 (add responsive screen)
                 }, 1000)
             } catch (err) {
                 console.log(err);
