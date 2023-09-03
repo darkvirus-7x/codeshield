@@ -36,8 +36,7 @@ export default function Login() {
                 updatedAlertMessage = response.data.message;
                 updatedColor = 'green';
                 setTimeout(() => {
-                    <NavLink to={'/'}/>
-                    console.log(1)
+                    location.pathname = '/'
                 }, 1000)
             } catch (err) {
                 console.log(err);
