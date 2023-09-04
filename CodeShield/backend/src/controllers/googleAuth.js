@@ -7,7 +7,7 @@ const googleAuth = (req,res) => {
         if (data.length === 0) {
             sql('INSERT INTO users (username,email,profile_pic,created_at,last_login,role) values (?,?,?,?,?,?)',[name,email,picture,new Date().toLocaleString(),new Date().toLocaleString(),'user'],(err,succ) => {
                 if (succ) {
-                    jwt.sign({name,email,profile: picture,role:'user'},config.parsed.SECRET_KEY,{expiresIn: '30d'},(err,token) => {
+                    jwt.sign({username:name,email,profile: picture,role:'user'},config.parsed.SECRET_KEY,{expiresIn: '30d'},(err,token) => {
                         if (token) {
                             res.cookie('code',token)
                             res.redirect('http://localhost:3000/')
