@@ -8,6 +8,7 @@ export default function Navbar(info) {
   let [page, setPage] = React.useState(info.page)
   const [isClicked, setClick] = React.useState(false)
   const [isLogin,setLogin] = React.useState(info.data.login)
+  console.log(info)
   const [bar,setBar] = React.useState(false)
   const cookie = new Cookies()
   const handleLogout = () => {
