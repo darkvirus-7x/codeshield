@@ -8,7 +8,7 @@ const validateUser = (req, res, next) => {
             jwt.verify(token,env.parsed.SECRET_KEY,(err,data) => {
                 if (data) {
                     req.data = {...data,exp:undefined,iat:undefined}
-                    return next()
+                    next()
                 }else {
                     res.status(403).send({message:'Invalid token'})
                 }

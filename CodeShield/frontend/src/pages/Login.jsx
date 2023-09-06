@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
 import React, { useState, useContext } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 import Back from '../components/Back';
 import Logo from '/logo.png'; // Make sure to provide the correct path to your logo image
@@ -10,6 +10,8 @@ import Alert from '../components/Alert';
 import Cookies from 'universal-cookie'
 
 export default function Login() {
+    const user = useOutletContext()
+    user.login && (location.pathname = '/')
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [alertMessage, setAMessage] = useState('');

@@ -13,11 +13,9 @@ const configOauth2 = () => {
         }
         ));
         passport.serializeUser(function(user, done) {
-                // console.log(user)
                 done(null, user);
         });
         passport.deserializeUser(function(user, done) {
-                // console.log(user)
                 done(null, user);
         });
 }

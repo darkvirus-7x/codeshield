@@ -11,8 +11,12 @@ const router = require('./routes/routes')
 const DB = require('./config/db')
 const cookieParser = require('cookie-parser')
 const configOauth2 = require('./config/passport')
+const courses = require('./controllers/courses')
 
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}))
 app.use(express.json())
 app.use(cookieParser())
 DB.getConnection()
@@ -23,6 +27,8 @@ configOauth2()
 app.use(fileUpload())
 app.use('/api',router)
 app.use('/uploads',express.static(path.join(__dirname,'uploads')))
+app.use('/courseimg',express.static(path.join(__dirname,'image_courses')))
+app.get('/courses/',courses)
 
 const port  = +config.PORT || 8000
 app.listen(port,'0.0.0.0',() => {

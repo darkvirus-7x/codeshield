@@ -4,31 +4,30 @@ import Logo from '/logo.png'
 import { NavLink } from 'react-router-dom'
 import Cookies from 'universal-cookie'
 import axios from 'axios'
+import { CartContext } from '../data/cartcontext'
 export default function Navbar(info) {
   let [page, setPage] = React.useState(info.page)
   const [isClicked, setClick] = React.useState(false)
   const [isLogin,setLogin] = React.useState(info.data.login)
-  console.log(info)
   const [bar,setBar] = React.useState(false)
+  const cart = React.useContext(CartContext)
   const cookie = new Cookies()
+  React.useEffect(() => {
+    axios.post('http://localhost:8000/api/cart?action=getcartitems',null,{
+        withCredentials: true,
+        headers: {
+            Authorization: cookie.get('code')
+        }
+    }).then((e) => cart.setData(e.data))
+}, []);
   const handleLogout = () => {
     axios.get('http://localhost:8000/api/logout',{
       headers: {
         Authorization: cookie.get('code')
       }
     })
-    .then((e) => {
-      if (e.data === 'OK') {
-        cookie.remove('code')
-        location.reload()
-      }
-    })
-    .catch(err => {
-      if (err.response.data.message === 'Invalid token') {
-        cookie.remove('code')
-        location.reload()
-      }
-    })
+      cookie.remove('code')
+      location.reload()
   }
   return (
     <div>
@@ -54,21 +53,29 @@ export default function Navbar(info) {
                     )
                     :
                     ( 
-                      <div className='flex flex-col justify-center items-center space-y-4'>
-                        <div className='flex items-center space-x-4 cursor-pointer' onClick={() => setBar((e) => !e)}>
-                          <img src={info.data.profile || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFE0lEQVR4nO2ay29VVRTGL23BgkTbgi0gKL4iKOCLP4FEJKmIxoGgcWAUR9LWgRODJoao4ABD1TgxToxEJwK+U4114KMioAMtPoM8oinWxMQWKZefWfY7YXlz7jl7n56CGlZyc29y1rfW3mevtfZ63ErlLP1PCWgBbgY2A7uAr4EhYFQf+/0VsFM8ncD5lX8DAecA64C3gRPEk2HeAtaarMoZ2EAz0AMcdos6BnwAPAKsAa4GZom3Wb+XALeKpx/40+EPAV3Ge7o2cRPwnVvA58B6oLWArFZh9zh53wI3TvYpPOsUmvKVJcmeohe0z8nfVrq5AR3AbikYATYAjaUqGdfTBHQrOBgNAO1lCV+o4zYaBJbm8F8BbAT6gCPynT8UxZ4GLg7QeQ3wjXTa98IyTiLZxCfmsDn2/iJQzYlUvwN3Aefl6J4NfOo20z4Rn0jM6WNgZgbvXL3xZKEvyOYXATP0sYj1uAvTZj5b7VmG3JluMwOFfAZ4zpnTrBxH7XcR7KIcuXfr3jkuzIdZC2T8ZBIz643dxCrn2Hk+sVq8Q1kbTsEt0d1h9FAO77UuAISFZmA68L1ADwTwvyTentBNOKylKUYHAni7nb/kmxjwoLsnckMs8Kv4L4vYgzdLO0mjeQGh+Qvxbghx8MOhRwicmzh47CacjPckY0WEyR/KPBXgTjHuDlzEAvEfjFy/l2GZslFn4Akm6cwdWYzviunewEW0J28ocv1pOoPSHeB+8b+ZdaGd0E3cEii0UReghdIpkXtIZCT3z7JA/jZlzWOp9QxwiwS+H7mQn4S7MAbnfOy4FjY9Atdf1xyBp/RwY+RiXhNudQxO2BXCfhSJe1S4zWkPXy+yIGCTcJticMI+JuzWSNwa4XamPUzSgMURAhtckfVwzGJq3qwlpg0ROKs+jQbTHh7Vw5g0Y54wwxHrr5UxLBlzIzCWfxkNpT1M6udpEQKnKR+rhka6lEhZlYypkU0Po2OlbEQ464IgH1segVvu/DL9Tii4kcS02iKFXgf8IuwTEbgnhfnZZETqnJ1lWomzL4oRKuwNwu6LwCQJYNQmjICrspy9UPh10etgaKqh6tHoQJGMgFOX967SLkSHt+aa0Q9Zjq/WqvHkp+N1SA2+uhdioRTF4ae6+np/QG41EBOpPKmjWTdFiU4aM9L6agZP0mVZUFBHW2bSWJNS31dQSVJonczgOSmeGQV1rM8N2a6w2lNQidm/0WgGj504RUYK/LOwWptX6h4JjT51uoxGRzN4kvvq8gLyVwWVujXNB2soN0Uome+cfUcG3w7X9JsfIb8J+DI42tW0g7oC+Jda40z5UhJ+6zqyNfBc+B0RNrc6ZHweE94OqjnC0TQlqtWtI/+Z+P6OVMD2kOxZkeflmj7xXvWu5pTSoEtpme633MYJ3K7Ql9BvwDPWOYxScKqu2OZ6Y+gKeBW4XjwXuEZ6XMu0ThO7173BMbVxbi9jVKZs9jb5T/KSqnqZNgUo3sR2b8NOBCf8FeDKiS4+Zx7zfM2pWxXaMVHBlzrn/zGvqV0GActcQLBNXFKW4DkaGaDpU/ckjd4aFZ1GnDl1lK2k2QUAdMOWNn1Var/Xye+d1Nl7nfH0PQVr9hZha8fTKydn9emXZo9LZ1DHsE8tHpt7LFZG3aBPqyq7TvH0uakVmgJ0nbY/DKSYmyWa70zwLxzrzshfODLMxMZwW4A3NHscVhgd0+9BPdsi3kJ1z1mq/AfoL3hzLb7qNxrGAAAAAElFTkSuQmCC'} className={`w-10 h-10 rounded-full object-cover`}/>
-                          <span className='text-[15px] font-semibold tracking-[0.5px]'>{info.data.username}</span>
-                        </div>
-                        <div className={`absolute top-[58px] mr-12 flex flex-col justify-center items-center p-0 space-y-[.7px] ${!bar ? 'hidden' : 'block'}`}>
-                          <i className="fa-solid fa-caret-up fa-lg text-white"></i>
-                          <div className='w-40 h-full py-2 space-y-2 bg-[rgba(0,0,0,.3)] rounded-lg border-[1px] border-white text-sm font-bold tracking-[-.2px] px-4'>
-                            <NavLink to={'/dashboard'} className='flex items-center space-x-2'>
-                              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAABJklEQVR4nO3UvyvFURjH8e/1I3YMysDdzJQymCQpBhlMMim7y3DzF4jBxCSllIkig9EfIAMpLMrMf/DSyaHT9f1+c8XmU596znme3uec56mTZf/6EFbxhMdfcmDVAngLszkHdqAPLVkTCqzAzAWjBXW84Bkr3z2gEIwp3OM2wntxiANUkroZLCUeKARjGNexBaG4HvcruMBcAl7AWuLBMvAxxmL8CY7rSZz+qBXep9oe40U8xJsGX+ImAewkueCJMvAV+mPcimr0EO7QlYC7k3w1uVAueBl7Oc/bwHrDXlPgCvZxhvkwLBzhBG0N4O+3omFQ29jEdNaESsF5Cs/NTXyty23FCHYL/BqGV5IfLQN3Y7zA5+gsyfcUgn9DKbj2J9/mv7KoN1NUE0YKWfoxAAAAAElFTkSuQmCC"/>
-                              <span>Dashboard</span>
-                            </NavLink>
-                            <div className='flex items-center space-x-[10px] cursor-pointer' onClick={handleLogout}>
-                              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAjElEQVR4nM3V0QnCMBAA0CAOINhN3MkRXEK38CN1gw6R6khP8iNS60fTQzy4n8A9Ane5JNxwR1mYtaZP08CYGmO2FmUFWKLBIRrswkDscMYm8oYnZGxDwDe0f6FrwQ/0G4gDjgvygevvwObmiGlKDmlK6Nhgj0v0YHd/vxzK3GH4gq1PZmz4AmpNnoJPzdmI9IQCQIQAAAAASUVORK5CYII="/>
-                              <span>Logout</span>
+                      <div className='flex items-center space-x-5'>
+                        <NavLink to={'/cart'} className=''>
+                          <i className='fa-solid fa-cart-shopping fa-lg'/>
+                          <div className='bg-red-500 rounded-full text-xs w-4 h-4 absolute top-6 right-44'>
+                            <div className='text-center'>{cart.data.itemCount}</div>
+                          </div>
+                        </NavLink>
+                        <div className='flex flex-col justify-center items-center space-y-4'>
+                          <div className='flex items-center space-x-4 cursor-pointer' onClick={() => setBar((e) => !e)}>
+                            <img src={info.data.data.profile || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFE0lEQVR4nO2ay29VVRTGL23BgkTbgi0gKL4iKOCLP4FEJKmIxoGgcWAUR9LWgRODJoao4ABD1TgxToxEJwK+U4114KMioAMtPoM8oinWxMQWKZefWfY7YXlz7jl7n56CGlZyc29y1rfW3mevtfZ63ErlLP1PCWgBbgY2A7uAr4EhYFQf+/0VsFM8ncD5lX8DAecA64C3gRPEk2HeAtaarMoZ2EAz0AMcdos6BnwAPAKsAa4GZom3Wb+XALeKpx/40+EPAV3Ge7o2cRPwnVvA58B6oLWArFZh9zh53wI3TvYpPOsUmvKVJcmeohe0z8nfVrq5AR3AbikYATYAjaUqGdfTBHQrOBgNAO1lCV+o4zYaBJbm8F8BbAT6gCPynT8UxZ4GLg7QeQ3wjXTa98IyTiLZxCfmsDn2/iJQzYlUvwN3Aefl6J4NfOo20z4Rn0jM6WNgZgbvXL3xZKEvyOYXATP0sYj1uAvTZj5b7VmG3JluMwOFfAZ4zpnTrBxH7XcR7KIcuXfr3jkuzIdZC2T8ZBIz643dxCrn2Hk+sVq8Q1kbTsEt0d1h9FAO77UuAISFZmA68L1ADwTwvyTentBNOKylKUYHAni7nb/kmxjwoLsnckMs8Kv4L4vYgzdLO0mjeQGh+Qvxbghx8MOhRwicmzh47CacjPckY0WEyR/KPBXgTjHuDlzEAvEfjFy/l2GZslFn4Akm6cwdWYzviunewEW0J28ocv1pOoPSHeB+8b+ZdaGd0E3cEii0UReghdIpkXtIZCT3z7JA/jZlzWOp9QxwiwS+H7mQn4S7MAbnfOy4FjY9Atdf1xyBp/RwY+RiXhNudQxO2BXCfhSJe1S4zWkPXy+yIGCTcJticMI+JuzWSNwa4XamPUzSgMURAhtckfVwzGJq3qwlpg0ROKs+jQbTHh7Vw5g0Y54wwxHrr5UxLBlzIzCWfxkNpT1M6udpEQKnKR+rhka6lEhZlYypkU0Po2OlbEQ464IgH1segVvu/DL9Tii4kcS02iKFXgf8IuwTEbgnhfnZZETqnJ1lWomzL4oRKuwNwu6LwCQJYNQmjICrspy9UPh10etgaKqh6tHoQJGMgFOX967SLkSHt+aa0Q9Zjq/WqvHkp+N1SA2+uhdioRTF4ae6+np/QG41EBOpPKmjWTdFiU4aM9L6agZP0mVZUFBHW2bSWJNS31dQSVJonczgOSmeGQV1rM8N2a6w2lNQidm/0WgGj504RUYK/LOwWptX6h4JjT51uoxGRzN4kvvq8gLyVwWVujXNB2soN0Uome+cfUcG3w7X9JsfIb8J+DI42tW0g7oC+Jda40z5UhJ+6zqyNfBc+B0RNrc6ZHweE94OqjnC0TQlqtWtI/+Z+P6OVMD2kOxZkeflmj7xXvWu5pTSoEtpme633MYJ3K7Ql9BvwDPWOYxScKqu2OZ6Y+gKeBW4XjwXuEZ6XMu0ThO7173BMbVxbi9jVKZs9jb5T/KSqnqZNgUo3sR2b8NOBCf8FeDKiS4+Zx7zfM2pWxXaMVHBlzrn/zGvqV0GActcQLBNXFKW4DkaGaDpU/ckjd4aFZ1GnDl1lK2k2QUAdMOWNn1Var/Xye+d1Nl7nfH0PQVr9hZha8fTKydn9emXZo9LZ1DHsE8tHpt7LFZG3aBPqyq7TvH0uakVmgJ0nbY/DKSYmyWa70zwLxzrzshfODLMxMZwW4A3NHscVhgd0+9BPdsi3kJ1z1mq/AfoL3hzLb7qNxrGAAAAAElFTkSuQmCC'} className={`w-10 h-10 rounded-full object-cover`}/>
+                            <span className='text-[15px] font-semibold tracking-[0.5px]'>{info.data.data.username}</span>
+                          </div>
+                          <div className={`absolute top-[58px] mr-12 flex flex-col justify-center items-center p-0 space-y-[.7px] ${!bar ? 'hidden' : 'block'}`}>
+                            <i className="fa-solid fa-caret-up fa-lg text-white"></i>
+                            <div className='w-40 h-full py-2 space-y-2 bg-[rgba(0,0,0,.3)] rounded-lg border-[1px] border-white text-sm font-bold tracking-[-.2px] px-4'>
+                              <NavLink to={'/dashboard/profile'} className='flex items-center space-x-2'>
+                                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAABJklEQVR4nO3UvyvFURjH8e/1I3YMysDdzJQymCQpBhlMMim7y3DzF4jBxCSllIkig9EfIAMpLMrMf/DSyaHT9f1+c8XmU596znme3uec56mTZf/6EFbxhMdfcmDVAngLszkHdqAPLVkTCqzAzAWjBXW84Bkr3z2gEIwp3OM2wntxiANUkroZLCUeKARjGNexBaG4HvcruMBcAl7AWuLBMvAxxmL8CY7rSZz+qBXep9oe40U8xJsGX+ImAewkueCJMvAV+mPcimr0EO7QlYC7k3w1uVAueBl7Oc/bwHrDXlPgCvZxhvkwLBzhBG0N4O+3omFQ29jEdNaESsF5Cs/NTXyty23FCHYL/BqGV5IfLQN3Y7zA5+gsyfcUgn9DKbj2J9/mv7KoN1NUE0YKWfoxAAAAAElFTkSuQmCC"/>
+                                <span>Dashboard</span>
+                              </NavLink>
+                              <div className='flex items-center space-x-[10px] cursor-pointer' onClick={handleLogout}>
+                                <i className="text-white fa-solid fa-right-from-bracket fa-lg" />
+                                <span>Logout</span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -100,7 +107,7 @@ export default function Navbar(info) {
             {isLogin &&
             <div>
               <img className='inline-block mr-3' src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAABJklEQVR4nO3UvyvFURjH8e/1I3YMysDdzJQymCQpBhlMMim7y3DzF4jBxCSllIkig9EfIAMpLMrMf/DSyaHT9f1+c8XmU596znme3uec56mTZf/6EFbxhMdfcmDVAngLszkHdqAPLVkTCqzAzAWjBXW84Bkr3z2gEIwp3OM2wntxiANUkroZLCUeKARjGNexBaG4HvcruMBcAl7AWuLBMvAxxmL8CY7rSZz+qBXep9oe40U8xJsGX+ImAewkueCJMvAV+mPcimr0EO7QlYC7k3w1uVAueBl7Oc/bwHrDXlPgCvZxhvkwLBzhBG0N4O+3omFQ29jEdNaESsF5Cs/NTXyty23FCHYL/BqGV5IfLQN3Y7zA5+gsyfcUgn9DKbj2J9/mv7KoN1NUE0YKWfoxAAAAAElFTkSuQmCC"/>
-              <NavLink to={'/dashboard'}>Dashboard</NavLink>
+              <NavLink to={'/dashboard/profile'}>Dashboard</NavLink>
             </div>
             }
           </div>
@@ -118,12 +125,12 @@ export default function Navbar(info) {
             </>
             ):(
               <>
-                <NavLink to={'/dashboard'} className='flex items-center space-x-2 -ml-[3px]'>
-                  <img src={info.data.profile || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFE0lEQVR4nO2ay29VVRTGL23BgkTbgi0gKL4iKOCLP4FEJKmIxoGgcWAUR9LWgRODJoao4ABD1TgxToxEJwK+U4114KMioAMtPoM8oinWxMQWKZefWfY7YXlz7jl7n56CGlZyc29y1rfW3mevtfZ63ErlLP1PCWgBbgY2A7uAr4EhYFQf+/0VsFM8ncD5lX8DAecA64C3gRPEk2HeAtaarMoZ2EAz0AMcdos6BnwAPAKsAa4GZom3Wb+XALeKpx/40+EPAV3Ge7o2cRPwnVvA58B6oLWArFZh9zh53wI3TvYpPOsUmvKVJcmeohe0z8nfVrq5AR3AbikYATYAjaUqGdfTBHQrOBgNAO1lCV+o4zYaBJbm8F8BbAT6gCPynT8UxZ4GLg7QeQ3wjXTa98IyTiLZxCfmsDn2/iJQzYlUvwN3Aefl6J4NfOo20z4Rn0jM6WNgZgbvXL3xZKEvyOYXATP0sYj1uAvTZj5b7VmG3JluMwOFfAZ4zpnTrBxH7XcR7KIcuXfr3jkuzIdZC2T8ZBIz643dxCrn2Hk+sVq8Q1kbTsEt0d1h9FAO77UuAISFZmA68L1ADwTwvyTentBNOKylKUYHAni7nb/kmxjwoLsnckMs8Kv4L4vYgzdLO0mjeQGh+Qvxbghx8MOhRwicmzh47CacjPckY0WEyR/KPBXgTjHuDlzEAvEfjFy/l2GZslFn4Akm6cwdWYzviunewEW0J28ocv1pOoPSHeB+8b+ZdaGd0E3cEii0UReghdIpkXtIZCT3z7JA/jZlzWOp9QxwiwS+H7mQn4S7MAbnfOy4FjY9Atdf1xyBp/RwY+RiXhNudQxO2BXCfhSJe1S4zWkPXy+yIGCTcJticMI+JuzWSNwa4XamPUzSgMURAhtckfVwzGJq3qwlpg0ROKs+jQbTHh7Vw5g0Y54wwxHrr5UxLBlzIzCWfxkNpT1M6udpEQKnKR+rhka6lEhZlYypkU0Po2OlbEQ464IgH1segVvu/DL9Tii4kcS02iKFXgf8IuwTEbgnhfnZZETqnJ1lWomzL4oRKuwNwu6LwCQJYNQmjICrspy9UPh10etgaKqh6tHoQJGMgFOX967SLkSHt+aa0Q9Zjq/WqvHkp+N1SA2+uhdioRTF4ae6+np/QG41EBOpPKmjWTdFiU4aM9L6agZP0mVZUFBHW2bSWJNS31dQSVJonczgOSmeGQV1rM8N2a6w2lNQidm/0WgGj504RUYK/LOwWptX6h4JjT51uoxGRzN4kvvq8gLyVwWVujXNB2soN0Uome+cfUcG3w7X9JsfIb8J+DI42tW0g7oC+Jda40z5UhJ+6zqyNfBc+B0RNrc6ZHweE94OqjnC0TQlqtWtI/+Z+P6OVMD2kOxZkeflmj7xXvWu5pTSoEtpme633MYJ3K7Ql9BvwDPWOYxScKqu2OZ6Y+gKeBW4XjwXuEZ6XMu0ThO7173BMbVxbi9jVKZs9jb5T/KSqnqZNgUo3sR2b8NOBCf8FeDKiS4+Zx7zfM2pWxXaMVHBlzrn/zGvqV0GActcQLBNXFKW4DkaGaDpU/ckjd4aFZ1GnDl1lK2k2QUAdMOWNn1Var/Xye+d1Nl7nfH0PQVr9hZha8fTKydn9emXZo9LZ1DHsE8tHpt7LFZG3aBPqyq7TvH0uakVmgJ0nbY/DKSYmyWa70zwLxzrzshfODLMxMZwW4A3NHscVhgd0+9BPdsi3kJ1z1mq/AfoL3hzLb7qNxrGAAAAAElFTkSuQmCC'} className={`w-6 h-6 rounded-full object-cover`}/>
-                  <span className='text-[15px] font-semibold tracking-[0.5px]'>{info.data.username}</span>
+                <NavLink to={'/dashboard/profile'} className='flex items-center space-x-2 -ml-[3px]'>
+                  <img src={info.data.data.profile || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFE0lEQVR4nO2ay29VVRTGL23BgkTbgi0gKL4iKOCLP4FEJKmIxoGgcWAUR9LWgRODJoao4ABD1TgxToxEJwK+U4114KMioAMtPoM8oinWxMQWKZefWfY7YXlz7jl7n56CGlZyc29y1rfW3mevtfZ63ErlLP1PCWgBbgY2A7uAr4EhYFQf+/0VsFM8ncD5lX8DAecA64C3gRPEk2HeAtaarMoZ2EAz0AMcdos6BnwAPAKsAa4GZom3Wb+XALeKpx/40+EPAV3Ge7o2cRPwnVvA58B6oLWArFZh9zh53wI3TvYpPOsUmvKVJcmeohe0z8nfVrq5AR3AbikYATYAjaUqGdfTBHQrOBgNAO1lCV+o4zYaBJbm8F8BbAT6gCPynT8UxZ4GLg7QeQ3wjXTa98IyTiLZxCfmsDn2/iJQzYlUvwN3Aefl6J4NfOo20z4Rn0jM6WNgZgbvXL3xZKEvyOYXATP0sYj1uAvTZj5b7VmG3JluMwOFfAZ4zpnTrBxH7XcR7KIcuXfr3jkuzIdZC2T8ZBIz643dxCrn2Hk+sVq8Q1kbTsEt0d1h9FAO77UuAISFZmA68L1ADwTwvyTentBNOKylKUYHAni7nb/kmxjwoLsnckMs8Kv4L4vYgzdLO0mjeQGh+Qvxbghx8MOhRwicmzh47CacjPckY0WEyR/KPBXgTjHuDlzEAvEfjFy/l2GZslFn4Akm6cwdWYzviunewEW0J28ocv1pOoPSHeB+8b+ZdaGd0E3cEii0UReghdIpkXtIZCT3z7JA/jZlzWOp9QxwiwS+H7mQn4S7MAbnfOy4FjY9Atdf1xyBp/RwY+RiXhNudQxO2BXCfhSJe1S4zWkPXy+yIGCTcJticMI+JuzWSNwa4XamPUzSgMURAhtckfVwzGJq3qwlpg0ROKs+jQbTHh7Vw5g0Y54wwxHrr5UxLBlzIzCWfxkNpT1M6udpEQKnKR+rhka6lEhZlYypkU0Po2OlbEQ464IgH1segVvu/DL9Tii4kcS02iKFXgf8IuwTEbgnhfnZZETqnJ1lWomzL4oRKuwNwu6LwCQJYNQmjICrspy9UPh10etgaKqh6tHoQJGMgFOX967SLkSHt+aa0Q9Zjq/WqvHkp+N1SA2+uhdioRTF4ae6+np/QG41EBOpPKmjWTdFiU4aM9L6agZP0mVZUFBHW2bSWJNS31dQSVJonczgOSmeGQV1rM8N2a6w2lNQidm/0WgGj504RUYK/LOwWptX6h4JjT51uoxGRzN4kvvq8gLyVwWVujXNB2soN0Uome+cfUcG3w7X9JsfIb8J+DI42tW0g7oC+Jda40z5UhJ+6zqyNfBc+B0RNrc6ZHweE94OqjnC0TQlqtWtI/+Z+P6OVMD2kOxZkeflmj7xXvWu5pTSoEtpme633MYJ3K7Ql9BvwDPWOYxScKqu2OZ6Y+gKeBW4XjwXuEZ6XMu0ThO7173BMbVxbi9jVKZs9jb5T/KSqnqZNgUo3sR2b8NOBCf8FeDKiS4+Zx7zfM2pWxXaMVHBlzrn/zGvqV0GActcQLBNXFKW4DkaGaDpU/ckjd4aFZ1GnDl1lK2k2QUAdMOWNn1Var/Xye+d1Nl7nfH0PQVr9hZha8fTKydn9emXZo9LZ1DHsE8tHpt7LFZG3aBPqyq7TvH0uakVmgJ0nbY/DKSYmyWa70zwLxzrzshfODLMxMZwW4A3NHscVhgd0+9BPdsi3kJ1z1mq/AfoL3hzLb7qNxrGAAAAAElFTkSuQmCC'} className={`w-6 h-6 rounded-full object-cover`}/>
+                  <span className='text-[15px] font-semibold tracking-[0.5px]'>{info.data.data.username}</span>
                 </NavLink>
                 <div className='flex items-center space-x-[10px] cursor-pointer' onClick={handleLogout}>
-                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAjElEQVR4nM3V0QnCMBAA0CAOINhN3MkRXEK38CN1gw6R6khP8iNS60fTQzy4n8A9Ane5JNxwR1mYtaZP08CYGmO2FmUFWKLBIRrswkDscMYm8oYnZGxDwDe0f6FrwQ/0G4gDjgvygevvwObmiGlKDmlK6Nhgj0v0YHd/vxzK3GH4gq1PZmz4AmpNnoJPzdmI9IQCQIQAAAAASUVORK5CYII="/>
+                  <i className="text-white fa-solid fa-right-from-bracket fa-lg" />
                   <span>Logout</span>
                 </div>
               </>

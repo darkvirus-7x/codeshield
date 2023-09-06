@@ -43,7 +43,8 @@
 body{
     background: black url('/blurry-gradient-haikei.png') center center ;
     background-size: cover;
-    height: 100%;
+    height: 100vh;
+    width: 100vw;
     font-family: 'Inter', sans-serif;
     font-family: 'Nunito Sans', sans-serif;
     font-family: 'Roboto', sans-serif;

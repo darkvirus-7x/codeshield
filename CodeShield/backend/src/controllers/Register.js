@@ -58,4 +58,4 @@ const Register = (req, res) => {
     }
 }
 
-module.exports = Register;
+module.exports = {Register,UploadFile};

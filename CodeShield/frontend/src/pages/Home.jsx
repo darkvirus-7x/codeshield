@@ -46,7 +46,7 @@ export default function Home() {
             {
               coursData.map((e,i) => {
                 return (
-                    <Course img={e.img} title={e.name} companie={e.Companie} rate={e.Rate} price={e.Price} key={i}/>
+                    <Course home img={e.img} title={e.name} companie={e.Companie} rate={e.Rate} price={e.Price} key={i}/>
                 )
               })
             }

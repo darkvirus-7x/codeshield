@@ -18,7 +18,8 @@ module.exports = {
         'gradient3': '#123262',
         'gradient4': '#161233',
         'gradient5': 'rgba(0,0,0,.2)',
-        'color6': 'rgb(226 ,232 ,240 , .05)'
+        'color6': 'rgb(226 ,232 ,240 , .05)',
+        'gradient6': 'rgba(124 121 121 / 23%)'
       },
       backgroundImage: {
         'fpattern': "url('./public/wave-haikei.svg')"
@@ -53,7 +54,8 @@ module.exports = {
         'custom1': '1100px',
         'custom2': '690px',
         'custom3': '315px',
-        'custom4': '881px'
+        'custom4': '881px',
+        'custom5': '415px',
       }
     },
   },

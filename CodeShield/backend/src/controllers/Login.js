@@ -12,7 +12,7 @@ const Login = (req,res) => {
                 const {id,username,email,profile_pic,role} = data[0]
                 bcrypt.compare(password,data[0].password,(err,succ) => {
                     if (succ) {
-                        jwt.sign({username,email,profile_pic,role},config.parsed.SECRET_KEY,{expiresIn: '30 days'},(err,token) => {
+                        jwt.sign({id,username,email,profile_pic,role},config.parsed.SECRET_KEY,{expiresIn: '30 days'},(err,token) => {
                             if (err) {console.log(err);res.send('Something went wrong')}
                             else {
                                 sql('UPDATE users SET last_login=? WHERE id=?',[new Date().toLocaleString(),id],(err,succ) => {
@@ -24,7 +24,7 @@ const Login = (req,res) => {
                                     data : {
                                         username,
                                         email,
-                                        profile_pic,
+                                        profile:profile_pic,
                                         role,
                                     }
                                 })

@@ -5,10 +5,13 @@ import App from './App.jsx'
 import './css/style.css';
 import { MyContextProvider } from './data/context.jsx';
 import { BrowserRouter as Router } from 'react-router-dom'
+import {MyCartContext} from './data/cartcontext'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Router>
-    <MyContextProvider>
-      <App/>
-    </MyContextProvider>
+    <MyCartContext>
+      <MyContextProvider>
+        <App/>
+      </MyContextProvider>
+    </MyCartContext>
   </Router>
 )

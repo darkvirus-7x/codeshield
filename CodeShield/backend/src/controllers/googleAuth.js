@@ -7,7 +7,7 @@ const googleAuth = (req,res) => {
         if (data.length === 0) {
             sql('INSERT INTO users (username,email,profile_pic,created_at,last_login,role) values (?,?,?,?,?,?)',[name,email,picture,new Date().toLocaleString(),new Date().toLocaleString(),'user'],(err,succ) => {
                 if (succ) {
-                    jwt.sign({username:name,email,profile: picture,role:'user'},config.parsed.SECRET_KEY,{expiresIn: '30d'},(err,token) => {
+                    jwt.sign({username:name,email,profile: picture,role:'user',isGoogle:true},config.parsed.SECRET_KEY,{expiresIn: '30d'},(err,token) => {
                         if (token) {
                             res.cookie('code',token)
                             res.redirect('http://localhost:3000/')
@@ -25,7 +25,7 @@ const googleAuth = (req,res) => {
             sql('UPDATE users SET last_login=? WHERE id=?',[new Date().toLocaleString(),id],(err,succ) => {
                 if (err) console.log(err)
             })
-            jwt.sign({id,username,email,profile: profile_pic,role},config.parsed.SECRET_KEY,{expiresIn: '30d'},(err,token) => {
+            jwt.sign({id,username,email,profile: profile_pic,role,isGoogle:true},config.parsed.SECRET_KEY,{expiresIn: '30d'},(err,token) => {
                 if(err) console.log(err)
                 else { 
                     res.cookie('code',token)

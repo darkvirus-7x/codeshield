@@ -5,9 +5,8 @@ import Cookies from 'universal-cookie';
 import { Outlet } from 'react-router-dom';
 import Loading from '../components/Loading';
 export default function CheckUser() {
-    const [islogin,setlogin] = React.useState(false)
     const [loading,setLoading] = React.useState(true)
-    const [data,setData] = React.useState({})
+    const [data,setData] = React.useState({login:false})
     const cookies = new Cookies();    
     React.useEffect(() => {
         if (cookies.get('code')) {
@@ -15,12 +14,11 @@ export default function CheckUser() {
                 headers: {
                     Authorization: cookies.get('code')
                 }
-            }).then((e) => {setData({...e.data.data,login:true});setlogin(true)})
-            .catch(() => {cookies.remove('code')}) 
+            }).then((e) => setData({...e.data,login:true}))
             .finally(() => setLoading(false))
         }else {
             setLoading(false)
         }
     }, []);
-    return loading ? <Loading/> : islogin ? <Outlet context={data}/> : <Outlet context={{login: false}}/>
+    return loading ? <Loading/> : <Outlet context={data}/>
 }
